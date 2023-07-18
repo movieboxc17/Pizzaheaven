@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Pizza Ordering Website</title>
+    <style>
+        body {
+            background-color: white;
+        }
+
+        /* Add styles for the "Place Order" button */
+        input[type="submit"] {
+            font-size: 20px;
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        /* Add styles for the welcome text */
+        h1 {
+            color: green;
+        }
+    </style>
+    <script src="https://js.stripe.com/v3/"></script>
+</head>
+<body>
+    <h1>Welcome to Pizza Heaven!</h1>
+    
+    <h4>1. Place any order by clicking the "Place Order" button.</h4>
+    
+    <h4>2. To pay, you have 2 options:</h4>
+    <ul>
+        <li>a. Fill in the code to pay.</li>
+        <li>b. Click the "Pay with card" button to pay, and then you can type whatever you want as the code.</li>
+    </ul>
+    
+    <form id="order-form" action="https://docs.google.com/forms/d/e/1FAIpQLScolw78f43BB2vjz5dljaUP3TOZ_ZjJZXGHj2Y2V9qGFlRuxg/viewform" method="post">
+        <!-- Your pizza order form fields here -->
+        <!-- ... -->
+
+        <!-- Add input field for the code -->
+        <label for="code-input">Enter the code:</label>
+        <input type="text" id="code-input" name="code" required>
+
+        <!-- Add checkbox for payment option -->
+        <input type="checkbox" id="pay-option" name="pay-option" value="pay">
+        <label for="pay-option">Pay with card</label>
+
+        <input type="submit" value="Place Order">
+    </form>
+
+    <!-- Payment form -->
+    <div id="payment-form" style="display: none;">
+        <label for="card-element">
+            Credit or debit card
+        </label>
+        <div id="card-element">
+            <!-- A Stripe Element will be inserted here. -->
+        </div>
+        <!-- Used to display form errors. -->
+        <div id="card-errors" role="alert"></div>
+        <button id="submit-payment">Pay Now</button>
+    </div>
+
+    <script>
+        // Create a Stripe client.
+        var stripe = Stripe('YOUR_STRIPE_PUBLIC_KEY');
+
+        // Create an instance of Elements.
+        var elements = stripe.elements();
+
+        // Custom styling can be passed to options when creating an Element.
+        var style = {
+            base: {
+                fontSize: '16px',
+                color: '#32325d',
+            },
+        };
+
+        // Create an instance of the card Element.
+        var card = elements.create('card', { style: style });
+
+        // Add an instance of the card Element into the `card-element` div.
+        card.mount('#card-element');
+
+        // Handle form submission.
+        var form = document.getElementById('order-form');
+        form.addEventListener('submit', function (event) {
+            event.preventDefault();
+
+            // Check if the "pay" option is selected
+            var payOption = document.getElementById('pay-option').checked;
+            if (payOption) {
+                // Show the payment form and hide the order form
+                document.getElementById('order-form').style.display = 'none';
+                document.getElementById('payment-form').style.display = 'block';
+            } else {
+                // Check if the code entered is "freepizza"
+                var codeInput = document.getElementById('code-input').value;
+                if (codeInput === "freepizza") {
+                    // Submit the form to the Google Form for free order
+                    form.submit();
+                } else {
+                    // Invalid code, display an error message or take any other action as needed.
+                    // For example, you can show an error message in a <div> with id "code-error"
+                    document.getElementById('code-error').textContent = 'Invalid code. Please enter a valid code.';
+                }
+            }
+        });
+
+        // Handle payment form submission.
+        var submitButton = document.getElementById('submit-payment');
+        submitButton.addEventListener('click', function (event) {
+            event.preventDefault();
+
+            stripe.createToken(card).then(function (result) {
+                if (result.error) {
+                    // Inform the user if there was an error.
+                    var errorElement = document.getElementById('card-errors');
+                    errorElement.textContent = result.error.message;
+                } else {
+                    // Send the token to your server to charge the payment.
+                    // The token contains information about the card.
+                    console.log(result.token);
+                    // You can send the token to your server and handle payment processing there.
+                }
+            });
+        });
+    </script>
+</body>
+</html>
