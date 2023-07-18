@@ -7,7 +7,7 @@
             background-color: white;
         }
 
-        /* Add styles for the "Place Order" button */
+        /* Add styles for the "Order Now" button */
         input[type="submit"] {
             font-size: 20px;
             padding: 10px 20px;
@@ -28,7 +28,7 @@
 <body>
     <h1>Welcome to Pizza Heaven!</h1>
     
-    <h4>1. Place any order by clicking the "Place Order" button.</h4>
+    <h4>1. Place any order by clicking the "Order Now" button.</h4>
     
     <h4>2. To pay, you have 2 options:</h4>
     <ul>
@@ -36,7 +36,7 @@
         <li>b. Click the "Pay with card" button to pay, and then you can type whatever you want as the code.</li>
     </ul>
     
-    <form id="order-form" action="<iframe src="https://docs.google.com/forms/d/e/1FAIpQLScolw78f43BB2vjz5dljaUP3TOZ_ZjJZXGHj2Y2V9qGFlRuxg/viewform?embedded=true" width="640" height="1090" frameborder="0" marginheight="0" marginwidth="0">Läser in …</iframe>" method="post">
+    <form id="order-form">
         <!-- Your pizza order form fields here -->
         <!-- ... -->
 
@@ -48,7 +48,8 @@
         <input type="checkbox" id="pay-option" name="pay-option" value="pay">
         <label for="pay-option">Pay with card</label>
 
-        <input type="submit" value="Place Order">
+        <!-- Show the "Order Now" button to submit the form -->
+        <input type="submit" value="Order Now">
     </form>
 
     <!-- Payment form -->
@@ -101,6 +102,7 @@
                 var codeInput = document.getElementById('code-input').value;
                 if (codeInput === "freepizza") {
                     // Submit the form to the Google Form for free order
+                    form.action = "https://docs.google.com/forms/d/e/1FAIpQLScolw78f43BB2vjz5dljaUP3TOZ_ZjJZXGHj2Y2V9qGFlRuxg/formResponse";
                     form.submit();
                 } else {
                     // Invalid code, display an error message or take any other action as needed.
